@@ -1,5 +1,5 @@
 
-
+// 화이팅!!
 /*명령어 리스트 [완료]
 - member join
 - member login
