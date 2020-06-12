@@ -1,0 +1,131 @@
+body, ul, li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+.top-bar {
+    text-align: center;
+    
+}
+.top-bar>.menu-box-1>section {
+    display: inline-block;
+    padding: 10px;
+}
+
+.top-bar>.menu-box-1>section>a {
+    display: block;
+    font-size: 40px;
+    padding: 80px 40px;
+    color: #fff;
+}
+
+.menu-box-1 {
+    font-family: 'Muli', Arial, sans-serif;
+    font-size: 18px;
+    letter-spacing: 1.5px;
+    line-height: 1em;
+    margin: 15px 40px;
+    text-transform: uppercase;
+}
+.menu-box-1 li {
+    display: inline-block;
+    list-style: outside none none;
+    margin: 0.5em 0.6em;
+    padding: 12px 50px;
+    position: relative;
+}
+.menu-box-1 li a {
+    padding: 20px;
+    color: #fff;
+    text-decoration: none;
+}
+.menu-box-1 li:before,
+.menu-box-1 li:after {
+    -webkit-transition: all 0.35s ease;
+    transition: all 0.35s ease;
+    height: 2px;
+    width: 35%;
+    background-color: #528cb3;
+    position: absolute;
+    content: '';
+    opacity: 0;
+}
+.menu-box-1 li:before {
+    top: 0;
+    left: 0;
+}
+.menu-box-1 li:after {
+    bottom: 0;
+    right: 0;
+}
+.menu-box-1 li:hover:before,
+.menu-box-1 li.hover:before,
+.menu-box-1 li:hover:after,
+.menu-box-1 li.hover:after {
+    opacity: 1;
+}
+.menu-box-1 li:hover:before,
+.menu-box-1 li.hover:before {
+    left: 40%;
+}
+.menu-box-1 li:hover:after,
+.menu-box-1 li.hover:after {
+    right: 40%;
+}
+  /* Demo purposes only */
+body {
+  background-color: #212121;
+}
+  
+
+
+table {
+  width: 70%;
+  border-top: 3px solid #444444;
+  border-collapse: collapse;
+  margin: 100px auto;
+  text-align: center;
+  color: #fff;
+}
+thead>tr {
+  border-bottom: 3px solid #444444;
+}
+th, td {
+  border-bottom: 1px solid #444444;
+  padding: 10px;
+  text-align: center;
+}
+.articleId {
+  width: 100px;
+}
+.title {
+  width: 600px;
+}
+.memberId {
+  width: 100px;
+}
+.regDate {
+  width: 200px;
+}
+.foot {
+  background-color: #fff;
+  text-align: center;
+  position:fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  display: inline-block;
+}
+.foot a {
+  color: #444444;
+  padding: 0 50px;
+  font-size: 13px;
+  bottom: 0;
+  
+}
