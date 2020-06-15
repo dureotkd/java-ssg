@@ -1,27 +1,23 @@
-//조원메세지
-//hello!!
-// 화이팅!!
-/*명령어 리스트 [완료]
-- member join
-- member login
-- member logout
-- member whoami
-- article wirte
-- article modify  
-- article delete 1
-- article list 1
-- article list 2 
-- article boardList
-- article changeBoard 1
-- article detail3 
-- article list 1 안녕 
-- article createBoard 
-- article deleteBoardNotice
-
-명령어 리스트 [미완료]
-- build site 
-- build startAutoSite 
-- build stopAutoSite*/
+//- member join
+//- member login
+//- member logout
+//- member whoami
+//- article wirte
+//- article modify  
+//- article delete 1
+//- article list 1
+//- article list 2 
+//- article boardList
+//- article changeBoard 1
+//- article detail3 
+//- article list 1 안녕 
+//- article createBoard 
+//- article deleteBoardNotice
+//
+//// 명령어 리스트 [미완료]
+//- build site 
+//- build startAutoSite 
+//- build stopAutoSite*/
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -42,8 +38,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-class Main2 {
+class Main {
 	public static void main(String[] args) {
+		
 		App app = new App();
 		app.start();
 	}
@@ -110,6 +107,8 @@ class Factory {
 		if (db == null) {
 			db = new DB();
 		}
+		
+
 
 		return db;
 	}
@@ -175,7 +174,7 @@ class App {
 		Factory.getMemberService().join("admin", "admin", "관리자");
 
 		// 공지사항 게시판 생성
-		Factory.getArticleService().makeBoard("공지시항", "notice");
+		Factory.getArticleService().makeBoard("공지사항", "notice");
 		// 자유 게시판 생성
 		Factory.getArticleService().makeBoard("자유게시판", "free");
 
@@ -208,7 +207,6 @@ class App {
 
 			controllers.get(reqeust.getControllerName()).doAction(reqeust);
 		}
-
 		Factory.getScanner().close();
 	}
 }
@@ -325,15 +323,13 @@ class ArticleController extends Controller {
 			actionCreateBoard(reqeust);
 		} else if (reqeust.getActionName().equals("deleteBoard")) {
 			actionDeleteBoard(reqeust);
-		} else if (reqeust.getActionName().equals("reply")) {
-			actionreply(reqeust);
+		} else {
+			System.out.printf("알 수 없는 명령어\n");
 		}
 	}
 	
 
-	private void actionreply(Request reqeust) {
-		articleService.actionreply();
-	}
+
 
 	private void actionDeleteBoard(Request reqeust) {
 		List<Board> boards = articleService.getBoards();
@@ -353,8 +349,11 @@ class ArticleController extends Controller {
 				for ( Board board : boards ) {
 				if ( boardId == board.getId()) {
 						Factory.getArticleService().boardDelete(boardId);
+						
 						System.out.println("삭제되었습니다.");
 					}
+				
+				
 				}
 				
 			}
@@ -393,30 +392,124 @@ class ArticleController extends Controller {
 			System.out.printf("[%d] %s \n",board.getId(),board.getName());
 			
 		}
-		
-		System.out.println("원하시는 게시물을 입력해주세요.");
-		int selectId = Factory.getScanner().nextInt();
-		Factory.getScanner().nextLine();
-		
-		for ( Article article : articles ) {
-			if ( article.getBoardId() == selectId ) {
-				System.out.printf("=====[%d]번 게시글====\n",article.getId());
-				System.out.printf("제목 : %s\n",article.getTitle());
-			}
-		}
-		
-		System.out.print("관련 검색어 불러오기 : ");
-		String serchTitle = Factory.getScanner().nextLine().trim();
-		
-		for ( Article article : articles) {
-			if ( article.getTitle().equals(serchTitle) || article.getBody().equals(serchTitle)) {
-				System.out.printf("=====[%d]번 게시글====\n",article.getId());
-				System.out.printf("제목 : %s\n",article.getTitle());
-				System.out.printf("내용 : %s\n",article.getBody());
-			}
-		}  
-	
-	}
+		System.out.println("");
+		System.out.print("원하는 게시물이 있는 게시판 번호를 입력해주세요 : ");
+		System.out.println("");
+        int boardId = Factory.getScanner().nextInt();
+        System.out.println("");
+        Factory.getScanner().nextLine();
+
+        int page = 1;
+        int articleSize = articles.size();
+        int lastPage = 0;
+        int lastLimit = 1;
+        int limit = 10;
+        
+        
+        if(articleSize % limit == 0){ //  articleSize(10) % limit == 0 
+           lastPage = articleSize / limit; // articleSize를 limit 으로  나눳을떄  lastPage == 1
+        }else{
+           lastPage = (articleSize / limit) + 1; // articleSize를 limit으로 나누고 +1 -> 2페이지 11부터시작 
+        }
+       
+        while(true){
+        	System.out.println("====  Exit  : return [input] ====");
+            System.out.println("==== Search : 검색    [input] ====");
+            
+            System.out.println("");
+            for ( Board board : boards ) {
+            	if ( board.getId() == boardId ) {
+            	System.out.printf("==== [%s] 리스트 ====\n",board.getName());
+            	}
+  
+            }
+            System.out.println("");
+            
+            for(int i=(limit - 10);i<limit;i++){ 
+            	if ( articleSize > i )
+            	{
+               article = articles.get(i);
+               if (article.getBoardId() == boardId) {
+            	  System.out.printf("%d번 게시물\n", article.getId());
+                  System.out.printf("제목 : %s\n", article.getTitle());
+               		}
+            	}
+            }
+            if ( lastPage == page && lastPage != 1 ) {
+            	System.out.println("=== Last Page ===");
+            	System.out.println("       << "+ page + "    ");
+               } 
+            if ( lastPage > page && page != 1 ) {
+            	System.out.println( " << == "+ page + " == >>");
+            }
+            if ( page == 1 ) {
+            	System.out.println("=== First Page ===");
+            	System.out.println("        "+ page + " >>   ");
+            }
+           
+            // >> 할려?
+            String pageUp = Factory.getScanner().nextLine().trim(); // 원하는 스캐너 입력 받고
+          
+            if ( pageUp.equals(">") && lastPage > page) {
+               page++;// 페이지는 1 올라가고 >>할때마다
+               limit+=10; // 0번째 -> 1~10 번호 출력 // 1번 -> 11 ~ 20 // 11 ~ 20 번호 출력  // 2번 -> 21~30 번호 출력 -->  31~20 번호 출력  20 ~ 10 번호 출력 10~1 번호 출력
+               System.out.println("다음페이지로 이동합니다.\n");
+              
+            }     
+               else if(pageUp.equals("<")&& page>1){
+               System.out.println("이전페이지로 이동합니다. \n");
+               page--; // <<면 페이지 다운
+               limit-=10; // limit -10씩 
+               
+            }  
+            
+               else if(pageUp.equals("<<")&& page>1) {
+            	   System.out.println("첫페이지로 이동합니다.\n");
+            	   page = 1;
+            	   limit = 10;
+               }
+            	
+               else if(pageUp.equals(">>")) {
+            	   System.out.println("마지막페이지로 이동합니다.\n");
+            	   page = lastPage;
+            	   limit = lastPage*10; 
+               }
+ 
+               else if(pageUp.equals("return")) {
+               break;
+            }  
+            
+            if ( pageUp.equals("검색")) {
+            System.out.println("\n\n");
+            System.out.print("관련 검색어 불러오기 : ");
+    		String serchTitle = Factory.getScanner().nextLine().trim();
+    		
+    		System.out.println("\n");
+    		for ( Article article : articles ) {
+    			if ( article.getTitle().equals(serchTitle) == false && article.getBody().equals(serchTitle) == false ) {
+    				System.out.printf("해당 [ %s ]가 포함된 게시글이 존재하지 않습니다 .\n",serchTitle);
+    				
+    				System.out.printf("\n\n");
+    			}
+    			break;
+    		}
+    		
+    		for ( Article article : articles) {
+    			if ( article.getTitle().equals(serchTitle) || article.getBody().equals(serchTitle)) {
+    				System.out.printf("=====[%d]번 게시글====\n",article.getId());
+    				System.out.printf("제목 : %s\n",article.getTitle());
+    				System.out.printf("내용 : %s\n",article.getBody());
+    				System.out.println("====================");
+    				System.out.println("\n\n");    				
+    						}
+    				continue;
+    					}
+            		}
+         		}
+        	}
+  	
+        /// 전체 article 소환해서 관련검색어로 serach 해가꼬 가저오기.
+
 
 	private void actiondetail(Request reqeust, int articleId) {
 		List<Article> articles = articleService.getArticles();
@@ -454,12 +547,9 @@ class ArticleController extends Controller {
 					System.out.println("게시물이 삭제되었습니다.");
 					break;
 				}
-				
-				if ( article.getId() != articleId ) {
-					System.out.printf("%d번 게시물은 존재하지 않습니다.\n",articleId);
-					return;
-				}
 			} 
+			
+			
 			
 			
 		} else {
@@ -511,20 +601,23 @@ class ArticleController extends Controller {
 	private void actionChangeBoardfree(Request reqeust) {
 		List<Article> articles = articleService.getArticles();
 		List<Board> boards = articleService.getBoards();
+		
 
 		for (Board board : boards) {
 			System.out.printf("[%d] %s\n", board.getId(), board.getName());
 		}
-
-		System.out.print("변경하고 싶은 게시판 번호를 입력해주세요. : ");
+		
+		
+		System.out.print("이동하고 싶은 게시판 번호를 입력해주세요. : ");
 		int boardId = Factory.getScanner().nextInt();
 		Factory.getScanner().nextLine();
-
+		
 		for (Board board : boards) {
 			if ( boardId == board.getId() ) {
 				Factory.getSession().setCurrentBoard(Factory.getArticleService().getBoard(boardId));
 				Board currentBoard = Factory.getSession().getCurrentBoard();
 				System.out.printf("%s으로 변경되었습니다.\n", currentBoard.getName());
+				
 				return;
 			}
 		}
@@ -541,44 +634,96 @@ class ArticleController extends Controller {
 	}
 	
 	// 게시물 리스트
-	private void actionList(Request reqeust) {
-		int page = 1;
-		int limit = 10;
-		List<Article> articles = articleService.getArticles();
-		List<Board> boards = articleService.getBoards();
+	 private void actionList(Request reqeust) {
+		    
+	        List<Article> articles = articleService.getArticles();
+	        List<Board> boards = articleService.getBoards();
+	        for (Board board : boards) {
+	        System.out.printf("[%d] %s\n", board.getId(), board.getName());
+	        }
+	   
+	        System.out.print("원하는 게시물이 있는 게시판 번호를 입력해주세요 : ");
+	        int boardId = Factory.getScanner().nextInt();
+	        Factory.getScanner().nextLine();
+	        
+	      
+	        int page = 1;
+	        int id = 0;
+	        int articleSize = articles.size();
+	        int lastPage = 0;
+	        int limitSum = 0;
+	        int lastLimit = 1;
+	        int limit = 10;
+	        if(articleSize % limit == 0){
+	           lastPage = articleSize / limit; // articleSize를 limit 으로  나눳을떄  1페이지 1부터 10까지
+	        }else{
+	           lastPage = (articleSize / limit) + 1; // articleSize를 limit으로 나누고 +1 -> 2페이지 11부터시작 
+	        }
+	       
+	        while(true){
+	        	
+	        	System.out.println("==== Exit : return [ 입력해주세요 ]  ====");
+ 	
+	            for(int i=(limit - 10);i<limit;i++){ 
+	            	if ( articleSize > i )
+	            	{
+	               article = articles.get(i);
+	               if (article.getBoardId() == boardId) {	// 입력한 게시판 번호랑 같은지1입력시  1공지사항 인지
+	            	  System.out.printf("%d번 게시물\n", article.getId());
+	                  System.out.printf("제목 : %s\n", article.getTitle());
+	               		}
+	            	}
+	            }
+	            
+	            if ( lastPage == page && lastPage != 1 ) {
+	            	System.out.println("=== Last Page ===");
+	            	System.out.println("       << "+ page + "    ");
+	               } 
+	            if ( lastPage > page && page != 1 ) {
+	            	System.out.println( " << == "+ page + " == >>");
+	            }
+	            if ( page == 1 ) {
+	            	System.out.println("=== First Page ===");
+	            	System.out.println("        "+ page + " >>   ");
+	            }
 
-		for (Board board : boards) {
-			System.out.printf("[%d] %s\n", board.getId(), board.getName());
-		}
+	            String pageUp = Factory.getScanner().nextLine().trim(); // 원하는 스캐너 입력 받고
+	            if ( pageUp.equals(">") && lastPage > page) {
+	               page++;// 페이지는 1 올라가고 >>할때마다
+	               limit+=10; // 0번째 -> 1~10 번호 출력 // 1번 -> 11 ~ 20 // 11 ~ 20 번호 출력  // 2번 -> 21~30 번호 출력 -->  31~20 번호 출력  20 ~ 10 번호 출력 10~1 번호 출력
+	               System.out.println("다음페이지로 이동합니다.\n");
+	              
+	            }     
+	               else if(pageUp.equals("<")&& page>1){
+	               System.out.println("이전페이지로 이동합니다. \n");
+	               page--; // <<면 페이지 다운
+	               limit-=10; // limit -10씩 
+	               
+	            }  
+	            
+	               else if(pageUp.equals("<<")&& page>1) {
+	            	   System.out.println("첫페이지로 이동합니다.\n");
+	            	   page = 1;
+	            	   limit = 10;
+	               }
+	            	
+	               else if(pageUp.equals(">>")) {
+	            	   System.out.println("마지막페이지로 이동합니다.\n");
+	            	   page = lastPage;
+	            	   limit = lastPage*10; 
+	               }
 
-		System.out.print("원하는 게시물이 있는 게시판 번호를 입력해주세요 : ");
-		int boardId = Factory.getScanner().nextInt();
-		Factory.getScanner().nextLine();
-
-		for ( Article article : articles ) {
-			if (article.getBoardId() == boardId) {
-				System.out.printf("%d번 게시물\n", article.getId());
-				System.out.printf("제목 : %s\n", article.getTitle());
-				if ( article.getId() == limit ) { // 10에서 걸림
-					System.out.println( " < == "+ page + " == >"); // >>  할래?
-					String pageUp = Factory.getScanner().nextLine().trim(); // 입력 받고
-					if ( pageUp.equals(">")) { // > 입력받아서 다음페이지 이동
-						System.out.println("다음페이지로 이동합니다.\n");
-						page++;// 페이지는 1 올라가고 >>할때마다
-						limit+=10; // 0번째 -> 1~10 번호 출력 // 1번 -> 11 ~ 20 // 11 ~ 20 번호 출력  // 2번 -> 21~30 번호 출력 -->  31~20 번호 출력  20 ~ 10 번호 출력 10~1 번호 출력
-					}
-				}
-			
-			
-			}
-		}
-		
-		System.out.println( " < == "+ page + " == "); // >>  할래? // 마지막 페이지는 여기다가 해줘야된다.
-	}
+	               else if(pageUp.equals("return")) {
+	               break;
+	            }    
+	         }
+	     }
 
 	private void actionWrite(Request reqeust) {
+		List<Board> boards = articleService.getBoards();
 		Member loginedMember = Factory.getSession().getLoginedMember();
 		if (loginedMember != null) {
+			System.out.println();
 			System.out.printf("제목 : ");
 			String title = Factory.getScanner().nextLine();
 			System.out.printf("내용 : ");
@@ -586,12 +731,15 @@ class ArticleController extends Controller {
 
 			// 현재 게시판 id 가져오기
 			int boardId = Factory.getSession().getCurrentBoard().getId();
-
+			//  현재 게시판 안에 게시글 고유번호 가저오기
+			
 			// 현재 로그인한 회원의 id 가져오기
 			int memberId = Factory.getSession().getLoginedMember().getId();
+			
 			int newId = articleService.write(boardId, memberId, title, body);
 
-			System.out.printf("%d번 글이 생성되었습니다.\n", newId);
+
+			System.out.printf("[TOTAL] %d번  [%s] %d번글이 생성되었습니다.\n", newId ,Factory.getSession().getCurrentBoard().getName(),newId);
 		} else {
 			System.out.println("글 작성하기 전에 로그인먼저 해주세요.");
 		}
@@ -608,8 +756,22 @@ class BuildController extends Controller {
 	@Override
 	void doAction(Request reqeust) {
 		if (reqeust.getActionName().equals("site")) {
+			System.out.println("==== 게시글 자동생성 중.... ====");
 			actionSite(reqeust);
 		}
+		
+		if (reqeust.getActionName().equals("stop")) {
+			System.out.println("==== 게시글 자동생성 종료.... ====");
+			actionStop(reqeust);
+		}
+	}
+	
+	
+	
+	
+
+	private void actionStop(Request reqeust) {
+		buildService.buildStop();
 	}
 
 	private void actionSite(Request reqeust) {
@@ -638,7 +800,8 @@ class MemberController extends Controller {
 
 	private void actionJoin(Request reqeust) {
 		System.out.println("\n==회원가입 시작==");
-
+		
+		
 		String name;
 		String loginId;
 		String loginPw;
@@ -723,7 +886,7 @@ class MemberController extends Controller {
 		}
 
 		// 로그인 아이디 중복 여부를 알려줌
-		int rs = memberService.join(name, loginId, loginPw);
+		int rs = memberService.join(loginId, loginPw, name);
 
 		if (rs == 1) {
 			System.out.println("성공하였습니다.");
@@ -780,65 +943,112 @@ class MemberController extends Controller {
 	}
 }
 
-// Service
+//Service
 class BuildService {
+	private static boolean buildSite;
+	
+	static {
+		buildSite = false;
+	}
 	ArticleService articleService;
+	MemberService memberService;
 
 	BuildService() {
 		articleService = Factory.getArticleService();
+		memberService = Factory.getMemberService();
+	}
+	
+	public void buildStop() {
+		buildSite = false;
 	}
 
-	public void buildSite() {
-		Util.makeDir("site");
-		Util.makeDir("site/article");
+	void buildSite() {
+		buildSite = true;
+		
+		new Thread(() -> {
+			while ( buildSite ) {
+				Util.makeDir("site_template/articleDetail");
+				
+				String head = Util.getFileContents("site_template/part/head.html");
+				String foot = Util.getFileContents("site_template/part/foot.html");
 
-		String head = Util.getFileContents("site_template/part/head.html");
-		String foot = Util.getFileContents("site_template/part/foot.html");
+				// 각 게시판 별 게시물리스트 페이지 생성
+				List<Board> boards = articleService.getBoards();
+				List<Member> members = memberService.getMembers();
+				String menu = "";
+				for (Board board : boards) {
+					menu += "<li><a href=\"../article/" + board.getCode() + "-list-1.html\">"+ board.getName() + "</a></li>";
+				}
+				head = head.replace("{$boardMenu}", menu);
+				Util.writeFileContents("site_template/part/index.html", head);
+				
+				for (Board board : boards) {
+					String fileName = board.getCode() + "-list-1.html";
 
-		// 각 게시판 별 게시물리스트 페이지 생성
-		List<Board> boards = articleService.getBoards();
+					String html = "";
 
-		for (Board board : boards) {
-			String fileName = board.getCode() + "-list-1.html";
+					List<Article> articles = articleService.getArticlesByBoardCode(board.getCode());
+					
+					String template = Util.getFileContents("site_template/article/list.html");
+					int i = 1;
+					for (Article article : articles) {
+						for(Member member : members) {
+							if(article.getMemberId() == (member.getId())) {
+								html += "<tr>";
+								html += "<td>" + i + "</td>";
+								html += "<td><a href=\"../articleDetail/" + article.getId() + ".html\">" + article.getTitle() + "</a></td>";
+								html += "<td>" + member.getLoginId() + "</td>";
+								html += "<td>" + article.getRegDate() + "</td>";
+								html += "</tr>";
+							}
+						}
+						
+						i++;
+						
+					
+					}
+					
+					html = template.replace("${TR}", html);
 
-			String html = "";
+					html = head + html + foot;
 
-			List<Article> articles = articleService.getArticlesByBoardCode(board.getCode());
+					Util.writeFileContents("site_template/article/" + fileName, html);
+				}
+				
+				//게시판 생성
+				
+				// 게시물 별 파일 생성
+				List<Article> articles = articleService.getArticles();
 
-			for (Article article : articles) {
-				html += "<div>게시물 번호 : " + article.getId() + ", 게시물 제목 : " + article.getTitle() + "</div>";
-			}
+				for (Article article : articles) {
+					String html = "<html>";
 
-			html = head + html + foot;
+					html += "<head>";
+					html += "<meta charset=\"utf-8\">";
+					html += "<link rel=\"stylesheet\" href=\"../css/Style.css\">";
+					html += "</head>";
 
-			Util.writeFileContents("site_template/article/" + fileName, html);
-		}
+					html += "<body>";
+					html += "<section class=\"detail-line\">";
+					html += "</section>";
+					html += "<div class=\"title\">제목 : " + article.getTitle() + "</div>";
+					html += "<section class=\"detail-line2\">";
+					html += "</section>";
+					html += "<div class=\"detail\">" + article.getBody() + "</div>";
+					html += "<div class=\"before\"><a href=\"" + (article.getId() - 1) + ".html\"><< 이전글</a></div>";
+					html += "<div class=\"next\"><a href=\"" + (article.getId() + 1) + ".html\">다음글 >></a></div>";
+					html += "</body>";
 
-		// 게시물 별 파일 생성
-		List<Article> articles = articleService.getArticles();
-
-		for (Article article : articles) {
-			String html = "<html>";
-
-			html += "<head>";
-			html += "<meta charset=\"utf-8\">";
-			html += "</head>";
-
-			html += "<body>";
-
-			html += "<div>제목 : " + article.getTitle() + "</div>";
-			html += "<div>내용 : " + article.getBody() + "</div>";
-			html += "<div><a href=\"" + (article.getId() - 1) + ".html\">이전글</a></div>";
-			html += "<div><a href=\"" + (article.getId() + 1) + ".html\">다음글</a></div>";
-
-			html += "</body>";
-
-			html += "</html>";
-
-			Util.writeFileContents("site/article/" + article.getId() + ".html", html);
-		}
+					html += "</html>";
+					html = head + html + foot;
+					Util.writeFileContents("site_template/articleDetail/" + article.getId() + ".html", html);
+				}
+				}
+				
+		}).start();
 	}
 
+	
 }
 class ArticleService {
 	private ArticleDao articleDao;
@@ -847,13 +1057,11 @@ class ArticleService {
 		articleDao = Factory.getArticleDao();
 	}
 
-	public Object actionreply() {
-		return articleDao.actionreply();
-	}
-
+	
 	public Object boardDelete(int boardId) {
 		return articleDao.boardDelete(boardId);
 	}
+	
 
 	public List<Article> getArticlesByBoardCode(String code) {
 		return articleDao.getArticlesByBoardCode(code);
@@ -912,6 +1120,10 @@ class MemberService {
 		memberDao = Factory.getMemberDao();
 	}
 
+	public List<Member> getMembers() {
+		return memberDao.getMembers();
+	}
+
 	public boolean isUsedLoginId(String loginId) {
 		Member member = memberDao.getMemberByLoginId(loginId);
 
@@ -949,10 +1161,7 @@ class ArticleDao {
 		db = Factory.getDB();
 	}
 
-	public Object actionreply() {
-		return db.actionreply();
-	}
-
+	
 	public Object boardDelete(int boardId) {
 		return db.boardDelete(boardId);
 	}
@@ -1003,6 +1212,10 @@ class MemberDao {
 		db = Factory.getDB();
 	}
 
+	public List<Member> getMembers() {
+		return db.getMembers();
+	}
+
 	public Member getMemberByLoginIdAndLoginPw(String loginId, String loginPw) {
 		return db.getMemberByLoginIdAndLoginPw(loginId, loginPw);
 	}
@@ -1035,10 +1248,7 @@ class DB {
 		tables.put("member", new Table<Member>(Member.class, dbDirPath));
 	}
 
-	public Object actionreply() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	public boolean boardDelete(int boardId) {
 		List<Board> boards = getBoards();
@@ -1054,6 +1264,7 @@ class DB {
 		}
 		return false;
 	}
+	
 
 	public List<Article> getArticlesByBoardCode(String code) {
 		Board board = getBoardByCode(code);
@@ -1281,6 +1492,16 @@ class Table<T> {
 // DTO
 abstract class Dto {
 	private int id;
+	private int boardArticleId;
+	
+	public int getBoardArticleId() {
+		return boardArticleId;
+	}
+
+	public void setBoardArticleId(int boardArticleId) {
+		this.boardArticleId = boardArticleId;
+	}
+
 	private String regDate;
 
 	public int getId() {
@@ -1309,6 +1530,7 @@ abstract class Dto {
 
 	Dto(int id, String regDate) {
 		this.id = id;
+		this.boardArticleId = boardArticleId;
 		this.regDate = regDate;
 	}
 }

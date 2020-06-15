@@ -14,15 +14,57 @@ a {
 }
 .top-bar>.menu-box-1>section {
     display: inline-block;
-    padding: 10px;
+    
+    
 }
 
 .top-bar>.menu-box-1>section>a {
     display: block;
     font-size: 40px;
-    padding: 80px 40px;
     color: #fff;
+    
 }
+
+
+
+.board{
+  --borderWidth: 3px;
+  background: #1D1F20;
+  position: relative;
+  border-radius: var(--borderWidth);
+  
+}
+
+.board:after {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--borderWidth));
+  left: calc(-1 * var(--borderWidth));
+  height: calc(100% + var(--borderWidth) * 2);
+  width: calc(100% + var(--borderWidth) * 2);
+  background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+  border-radius: calc(2 * var(--borderWidth));
+  z-index: -1;
+  animation: animatedgradient 3s ease alternate infinite;
+  background-size: 300% 300%;
+}
+#board-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin:50px auto;
+  width: 190px;
+  height: 70px;
+  color: white;
+  font-family: 'Raleway';
+  font-size: 2.5rem;
+  
+}
+
+
+
+
+
 
 .menu-box-1 {
     font-family: 'Muli', Arial, sans-serif;
@@ -40,7 +82,8 @@ a {
     position: relative;
 }
 .menu-box-1 li a {
-    padding: 20px;
+    padding: 40px;
+    top: 100px;
     color: #fff;
     text-decoration: none;
 }
@@ -49,8 +92,8 @@ a {
     -webkit-transition: all 0.35s ease;
     transition: all 0.35s ease;
     height: 2px;
-    width: 35%;
-    background-color: #528cb3;
+    width: 30%;
+    background-color: #fff;
     position: absolute;
     content: '';
     opacity: 0;
@@ -112,8 +155,12 @@ th, td {
 .regDate {
   width: 200px;
 }
+
+
+
+
 .foot {
-  background-color: #fff;
+  background-color: #212121;
   text-align: center;
   position:fixed;
   left: 0;
@@ -123,9 +170,146 @@ th, td {
   display: inline-block;
 }
 .foot a {
-  color: #444444;
-  padding: 0 50px;
-  font-size: 13px;
-  bottom: 0;
+  display: inline-block;
+  color: #fff;
+  padding: 15px 40px;;
+  height: 25px;
+  width: 25px;
+}
+
+.text a {
+  text-align: center;
   
+}
+.text > a:first-child:hover {
+  color: #1098ad;
+}
+.text > a:last-child:hover {
+  color: #ef4e7b;
+}
+
+
+
+
+
+
+
+@import url('https://fonts.googleapis.com/css?family=Raleway:200');
+
+
+
+#box {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  padding:5px 0px 5px 60px;
+  width: 500px;
+  height: 300px;
+  color: white;
+  font-family: 'Raleway';
+  font-size: 3.8rem;
+}
+.gradient-border{
+  --borderWidth: 3px;
+  background: #1D1F20;
+  position: relative;
+  border-radius: var(--borderWidth);
+  margin: 15% auto;
+}
+.gradient-border > a{
+  text-align: left;
+  margin-left: 15px;
+}
+
+.gradient-border:after {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--borderWidth));
+  left: calc(-1 * var(--borderWidth));
+  height: calc(100% + var(--borderWidth) * 2);
+  width: calc(100% + var(--borderWidth) * 2);
+  background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+  border-radius: calc(2 * var(--borderWidth));
+  z-index: -1;
+  animation: animatedgradient 3s ease alternate infinite;
+  background-size: 300% 300%;
+}
+
+
+@keyframes animatedgradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+body {
+  text-align: center;
+  
+}
+.title {
+  margin: 30px auto 0px auto;
+}
+.detail {
+  display: inline-block;
+  width: 800px;
+  height: auto;
+  border-collapse: collapse;
+  margin: 15px auto 200px auto;
+  text-align: center;
+  color: #fff;
+}
+.detail-line {
+  display: inline-block;
+  position: relative;
+  width: 900px;
+  height: 1px;
+  background-color: #fff;
+}
+.detail-line2 {
+  text-align: center;
+  position: relative;
+  width: 900px;
+  height: 1px;
+  background-color: #fff;
+  opacity: 0.1;
+  text-align: center;
+  margin: 30px auto;
+  
+}
+
+body div {
+  color: #fff;
+  margin: 10px auto 0px auto;
+}
+body .before {
+  position: fixed;
+  display: inline-block;
+  text-align: left;
+  left: 250px;
+  bottom: 100px;
+  transition: all 0.1s ease-in-out;
+  font-size: 12px;
+}
+body .next {
+  transition: all 0.1s ease-in-out;
+  font-size: 12px;
+  position: fixed;
+  display: inline-block;
+  text-align: right;
+  right: 250px;
+  bottom: 100px
+}
+
+body .before:hover {
+  transform: scale(1.1);
+  -webkit-transform: scale(1.1);
+}
+body .next:hover {
+  transform: scale(1.1);
+  -webkit-transform: scale(1.1);
 }
